@@ -9,3 +9,7 @@ Rails:
   Enabled: true
 Performance:
   Enabled: true
+
+# Wouldn't do in a production app, just for this interview purposes
+Style/FrozenStringLiteralComment:
+  Enabled: false
