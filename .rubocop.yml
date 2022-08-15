@@ -10,6 +10,9 @@ Rails:
 Performance:
   Enabled: true
 
+Style/StringLiterals:
+  Enabled: false
+
 # Wouldn't do in a production app, just for this interview purposes
 Style/FrozenStringLiteralComment:
   Enabled: false
