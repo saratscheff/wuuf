@@ -11,15 +11,16 @@ RSpec.describe "SolarPanelDistributions", type: :request do
       post "/solar_panel_distribution/dimmensions_form_submit",
            params: {
             dimmensions: {
-              roof_dimmension_x: 200,
-              roof_dimmension_y: 150,
-              solar_panel_dimmension_x: 36,
-              solar_panel_dimmension_y: 64,
+              roof_dimmension_x: 300,
+              roof_dimmension_y: 500,
+              solar_panel_dimmension_x: 100,
+              solar_panel_dimmension_y: 200,
+              lock_rotation: "true"
             }
            }
 
       expect(response).to have_http_status(:success)
-      expect(response.body).to match(/transform=\"translate\(108\.0\,64\.0\)\">/)
+      expect(response.body).to match(/transform=\"translate\(200\.0\,200\.0\)\">/)
     end
   end
 end
