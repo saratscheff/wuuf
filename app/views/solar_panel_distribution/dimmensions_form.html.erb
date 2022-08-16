@@ -1,5 +1,6 @@
-<%= turbo_frame_tag 'dimmensions_form_frame' do %>
-  <div>
+<section>
+
+    <%= turbo_frame_tag 'dimmensions_form_frame' do %>
       <h2>Medidas de mi techo y paneles solares</h2>
       <%= form_with scope: :dimmensions, url: dimmensions_form_submit_path, local: true do |form| %>
           <%= form.label :dimmension_units, 'Ingresar medidas en centímetros (10 metros = 1000 centímetros)', class: 'my-0 d-inline' %>
@@ -21,5 +22,19 @@
           <br>
           <%= form.submit 'Submit this number', id: 'submit-number' %>
       <% end %>
-  <div>
-<% end %>
+
+      <div>
+        <h2>Caben <%= solar_panels.count %> paneles solares</h2>
+        <svg width="<%=local_assigns[:roof_dimmension_x]%>" height="<%=local_assigns[:roof_dimmension_y]%>">
+          <rect width="<%=local_assigns[:roof_dimmension_x]%>"height="<%=local_assigns[:roof_dimmension_y]%>"  style="fill:rgb(100,100,100);stroke-width:3;stroke:rgb(0,0,0)"></rect>
+          <% solar_panels.each do |solar_panel| %>
+            <g transform="translate(<%=solar_panel.position_x%>,<%=solar_panel.position_y%>)">
+              <rect width="<%=solar_panel.width%>" height="<%=solar_panel.height%>" style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)"></rect>
+            </g>
+          <% end %>
+        </svg>
+      </div>
+
+    <% end %>
+
+</section>
