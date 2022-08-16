@@ -1,29 +1,23 @@
-class PanelDistribution::SameOrientationRectangle
+class PanelDistribution::FixedOrientationRectangle
   attr_reader :roof_dimmension_x,
               :roof_dimmension_y,
               :solar_panel_dimmension_x,
               :solar_panel_dimmension_y
 
   def calculate_solar_panels_array
-    solar_panels_regular = PanelDistribution::FixedOrientationRectangle.new(
-      roof_dimmension_x: @roof_dimmension_x,
-      roof_dimmension_y: @roof_dimmension_y,
-      solar_panel_dimmension_x: @solar_panel_dimmension_x,
-      solar_panel_dimmension_y: @solar_panel_dimmension_y
-    ).calculate_solar_panels_array
+    solar_panels = []
 
-    solar_panels_inverted = PanelDistribution::FixedOrientationRectangle.new(
-      roof_dimmension_x: @roof_dimmension_x,
-      roof_dimmension_y: @roof_dimmension_y,
-      solar_panel_dimmension_x: @solar_panel_dimmension_y,
-      solar_panel_dimmension_y: @solar_panel_dimmension_x
-    ).calculate_solar_panels_array
-
-    if solar_panels_regular.count >= solar_panels_inverted.count
-      solar_panels_regular
-    else
-      solar_panels_inverted
+    index_x = 0; index_y = 0
+    while index_y + @solar_panel_dimmension_y <= @roof_dimmension_y
+      while index_x + @solar_panel_dimmension_x <= @roof_dimmension_x
+        solar_panels << solar_panel(index_x, index_y)
+        index_x += @solar_panel_dimmension_x
+      end
+      index_y += @solar_panel_dimmension_y
+      index_x = 0
     end
+
+    solar_panels
   end
 
   private
@@ -48,7 +42,7 @@ class PanelDistribution::SameOrientationRectangle
     fail "All dimmensions need to be positive non-zero values" unless dimmensions.all?(&:positive?)
   end
 
-  def solar_panel(position_x, position_y)
+  def solar_panel(position_x,position_y)
     SolarPanelPosition.new(
       position_x: position_x,
       position_y: position_y,
