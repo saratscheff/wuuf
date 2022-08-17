@@ -4,12 +4,19 @@ default: &default
   host: db
   username: postgres
   password: password
-  pool: 5
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+production:
+  <<: *default
+  database: <%= ENV["PRODUCTION_DB_NAME"] %>
+  username: <%= ENV["PRODUCTION_DB_USERNAME"] %>
+  password: <%= Rails.application.credentials.gcp[:db_password] %>
+  host: "<%= ENV.fetch("DB_SOCKET_DIR") { '/cloudsql' } %>/<%= ENV["CLOUD_SQL_CONNECTION_NAME"] %>"
 
 development:
   <<: *default
   database: myapp_development
-
 
 test:
   <<: *default
