@@ -1,16 +1,32 @@
-# syntax=docker/dockerfile:1
 FROM ruby:2.7.6
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+
+RUN (curl -sS https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | apt-key add -) && \
+    echo "deb https://deb.nodesource.com/node_14.x bullseye main"      > /etc/apt/sources.list.d/nodesource.list && \
+    apt-get update && apt-get install -y nodejs lsb-release
+
+RUN (curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -) && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && apt-get install -y yarn
+
 WORKDIR /myapp
-COPY Gemfile /myapp/Gemfile
-COPY Gemfile.lock /myapp/Gemfile.lock
-RUN bundle install
 
-# Add a script to be executed every time the container starts.
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
-EXPOSE 3000
+COPY Gemfile Gemfile.lock ./
 
-# Configure the main process to run when running the image
-CMD ["rails", "server", "-b", "0.0.0.0"]
+RUN gem install bundler && \
+    bundle config set --local deployment 'true' && \
+    bundle config set --local without 'development test' && \
+    bundle install
+
+COPY . /myapp
+
+ENV RAILS_ENV=production
+ENV RAILS_SERVE_STATIC_FILES=true
+ENV RAILS_LOG_TO_STDOUT=true
+ARG MASTER_KEY
+ENV RAILS_MASTER_KEY=${MASTER_KEY}
+
+RUN bundle exec rake assets:precompile
+
+EXPOSE 8080
+
+CMD ["bin/rails", "server", "-b", "0.0.0.0", "-p", "8080"]
