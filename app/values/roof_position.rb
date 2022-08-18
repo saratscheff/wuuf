@@ -1,0 +1,2 @@
+class RoofPosition < FlatElementPosition
+end
